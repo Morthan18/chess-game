@@ -1,0 +1,1 @@
+D:\bulbid\kotlinproject\app\build\classes\kotlin\main\demo\App.class;D:\bulbid\kotlinproject\app\build\classes\kotlin\main\demo\AppKt.class
