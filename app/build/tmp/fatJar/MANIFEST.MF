@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
 Implementation-Title: Gradle Jar File Example
-Main-Class: demo.AppKt
+Main-Class: demo.MainKt
 

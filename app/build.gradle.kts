@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom")) // <4>
-
+    api("com.1stleg:jnativehook:2.0.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // <5>
 
     implementation("com.google.guava:guava:30.1.1-jre") // <6>
@@ -26,7 +26,7 @@ val fatJar = task("fatJar", type = Jar::class) {
     manifest {
         attributes["Implementation-Title"] = "Gradle Jar File Example"
         attributes["Implementation-Version"] = archiveVersion
-        attributes["Main-Class"] = "demo.AppKt"
+        attributes["Main-Class"] = "demo.MainKt"
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     with(tasks.jar.get() as CopySpec)
@@ -38,5 +38,5 @@ tasks {
     }
 }
 application {
-    mainClass.set("demo.AppKt") // <9>
+    mainClass.set("demo.MainKt") // <9>
 }
