@@ -17,6 +17,7 @@ class KeyboardListener(private val boardRenderer: ConsoleBoardRenderer) : Native
             "Down" -> boardRenderer.moveCursorDown()
             "Left" -> boardRenderer.moveCursorLeft()
             "Right" -> boardRenderer.moveCursorRight()
+            "Space" -> boardRenderer.markTheFigure()
         }
     }
 

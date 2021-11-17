@@ -12,10 +12,10 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
     init {
         val logger: Logger = Logger.getLogger(GlobalScreen::class.java.getPackage().name)
         logger.level = Level.OFF
-        
+
         GlobalScreen.registerNativeHook()
         GlobalScreen.addNativeKeyListener(KeyboardListener(this))
-        
+
         Runtime.getRuntime().addShutdownHook(
             thread(start = false) { GlobalScreen.unregisterNativeHook() }
         )
@@ -45,13 +45,24 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         this.render()
     }
 
-
     private fun findFigure(position: Position): Figure? {
         return board.figures[position]
     }
 
+    private fun findAllMarkedFiguresExcept(figure: Figure): List<Figure> {
+        return board.figures.toList()
+            .filter { pair -> pair.second != figure }
+            .filter { pair -> pair.second.isMarked }
+            .map { pair -> pair.second }
+    }
+
     private fun chooseBackgroundColor(position: Position): BackgroundColor {
         if (cursor.isAtPosition(position) && cursor.visible) {
+            return BackgroundColor.CYAN
+        }
+
+        val figure = findFigure(position)
+        if (figure != null && figure.isMarked) {
             return BackgroundColor.CYAN
         }
 
@@ -98,5 +109,17 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         print("\u001b[H\u001b[2J")
 
         previousRows.forEach { row -> row.render() }
+    }
+
+    override fun markTheFigure() {
+        val figure: Figure? = findFigure(cursor.position)
+        if (figure != null) {
+            figure.isMarked = true
+            val otherMarkedFigures = findAllMarkedFiguresExcept(figure)
+            if (otherMarkedFigures.isNotEmpty()) {
+                otherMarkedFigures.forEach { f -> f.isMarked = false }
+            }
+        }
+        this.refresh()
     }
 }

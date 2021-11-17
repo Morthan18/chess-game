@@ -3,7 +3,7 @@ package demo.console
 import demo.domain.Position
 
 
-class Cursor(private var position: Position, var visible: Boolean) {
+class Cursor(var position: Position, var visible: Boolean) {
 
     fun isAtPosition(position: Position): Boolean {
         return this.position == position
