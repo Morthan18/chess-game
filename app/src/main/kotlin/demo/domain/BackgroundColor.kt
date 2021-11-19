@@ -1,5 +1,5 @@
 package demo.domain
 
 enum class BackgroundColor {
-    YELLOW, RED, CYAN
+    ORANGE, BLUE, IVORY, RED, GREEN
 }

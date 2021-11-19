@@ -4,5 +4,7 @@ interface BoardRenderer {
 
     fun render()
     
-    fun markTheFigure()
+    fun selectFigure()
+    
+    fun unmarkFigure()
 }

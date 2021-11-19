@@ -1,4 +1,4 @@
 package demo.domain
 
-class Queen(figureColor: FigureColor) : Figure(figureColor) {
+class Queen(figureColor: FigureColor, position: Position) : Figure(figureColor, position) {
 }

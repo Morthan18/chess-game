@@ -1,4 +1,4 @@
 package demo.domain
 
-class Knight(figureColor: FigureColor) : Figure(figureColor) {
+class Knight(figureColor: FigureColor, position: Position) : Figure(figureColor, position) {
 }

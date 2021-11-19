@@ -1,4 +1,4 @@
 package demo.domain
 
-class Rook(figureColor: FigureColor) : Figure(figureColor) {
+class Rook(figureColor: FigureColor, position: Position) : Figure(figureColor, position) {
 }

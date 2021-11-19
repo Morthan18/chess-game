@@ -1,7 +1,5 @@
 package demo.console
 
-import demo.domain.Board
-import demo.domain.BoardRenderer
 import org.jnativehook.keyboard.NativeKeyEvent
 import org.jnativehook.keyboard.NativeKeyListener
 
@@ -17,7 +15,8 @@ class KeyboardListener(private val boardRenderer: ConsoleBoardRenderer) : Native
             "Down" -> boardRenderer.moveCursorDown()
             "Left" -> boardRenderer.moveCursorLeft()
             "Right" -> boardRenderer.moveCursorRight()
-            "Space" -> boardRenderer.markTheFigure()
+            "Space" -> boardRenderer.selectFigure()
+            "Escape" -> boardRenderer.unmarkFigure()
         }
     }
 

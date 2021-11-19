@@ -1,3 +1,3 @@
 package demo.domain
 
-data class Position(var x: Int, var y: Int)
+data class Position(val x: Int, val y: Int)

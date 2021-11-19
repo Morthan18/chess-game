@@ -7,7 +7,8 @@ import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
-    private val cursor: Cursor = Cursor(Position(2, 7), true)
+    private val cursor: Cursor = Cursor(Position(3, 1))
+    private val cleanConsole: String = "\u001b[H\u001b[2J"
 
     init {
         val logger: Logger = Logger.getLogger(GlobalScreen::class.java.getPackage().name)
@@ -23,60 +24,65 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
 
     fun moveCursorUp() {
         this.cursor.moveUp()
+        this.changeCursorColorIfMoveIntention()
         this.refresh()
     }
 
     fun moveCursorDown() {
         this.cursor.moveDown()
+        this.changeCursorColorIfMoveIntention()
         this.refresh()
     }
 
     fun moveCursorLeft() {
         this.cursor.moveLeft()
+        this.changeCursorColorIfMoveIntention()
         this.refresh()
     }
 
     fun moveCursorRight() {
         this.cursor.moveRight()
+        this.changeCursorColorIfMoveIntention()
         this.refresh()
+    }
+
+    private fun changeCursorColorIfMoveIntention() {
+        val figure: Figure? = this.board.findAnyMarkedFigure()
+        if (figure != null) {
+            this.cursor.color =
+                if (board.isMoveLegal(figure, this.cursor.position)) {
+                    BackgroundColor.GREEN
+                } else {
+                    BackgroundColor.RED
+                }
+        }
     }
 
     private fun refresh() {
         this.render()
     }
 
-    private fun findFigure(position: Position): Figure? {
-        return board.figures[position]
-    }
-
-    private fun findAllMarkedFiguresExcept(figure: Figure): List<Figure> {
-        return board.figures.toList()
-            .filter { pair -> pair.second != figure }
-            .filter { pair -> pair.second.isMarked }
-            .map { pair -> pair.second }
-    }
-
     private fun chooseBackgroundColor(position: Position): BackgroundColor {
-        if (cursor.isAtPosition(position) && cursor.visible) {
-            return BackgroundColor.CYAN
+        if (cursor.isAtPosition(position)) {
+            return cursor.color
         }
 
-        val figure = findFigure(position)
+        val figure = board.findFigure(position)
         if (figure != null && figure.isMarked) {
-            return BackgroundColor.CYAN
+            return cursor.color
         }
 
         return if (position.y % 2 == 0) {
             if (position.x % 2 == 0) {
-                BackgroundColor.RED
+                BackgroundColor.BLUE
             } else {
-                BackgroundColor.YELLOW
+                BackgroundColor.ORANGE
             }
         } else {
             if (position.x % 2 == 0) {
-                BackgroundColor.YELLOW
+                BackgroundColor.ORANGE
             } else {
-                BackgroundColor.RED
+                BackgroundColor.BLUE
             }
         }
     }
@@ -88,7 +94,7 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         for (y in 7 downTo 0) {
             val currentRow = Row()
             for (x in 0..7) {
-                val figure: Figure? = findFigure(Position(x, y))
+                val figure: Figure? = board.findFigure(Position(x, y))
                 val texture: Texture = if (figure != null) {
                     when (figure) {
                         is Rook -> loader.getRook(figure.figureColor, chooseBackgroundColor(Position(x, y)))
@@ -106,20 +112,34 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
             }
             previousRows.add(currentRow)
         }
-        print("\u001b[H\u001b[2J")
+        print(cleanConsole)
 
         previousRows.forEach { row -> row.render() }
     }
 
-    override fun markTheFigure() {
-        val figure: Figure? = findFigure(cursor.position)
-        if (figure != null) {
-            figure.isMarked = true
-            val otherMarkedFigures = findAllMarkedFiguresExcept(figure)
-            if (otherMarkedFigures.isNotEmpty()) {
-                otherMarkedFigures.forEach { f -> f.isMarked = false }
+    override fun selectFigure() {
+        val actualMarkedFigure: Figure? = board.findFigure(cursor.position)
+
+        val otherMarkedFigures = board.findAllMarkedFiguresExcept(actualMarkedFigure)
+        if (otherMarkedFigures.isNotEmpty()) {
+            val figureToMove = otherMarkedFigures[0]
+            if (board.isMoveLegal(figureToMove, cursor.position)) {
+                board.makeMove(figureToMove, cursor.position)
+                cursor.setDefaultColor()
+                figureToMove.isMarked = false
             }
+        } else {
+            actualMarkedFigure?.isMarked = true
+//            if (otherMarkedFigures.isNotEmpty()) {
+//                otherMarkedFigures.forEach { f -> f.isMarked = false }
+//            }
         }
+        this.refresh()
+    }
+
+    override fun unmarkFigure() {
+        board.findAnyMarkedFigure()?.isMarked = false
+        cursor.setDefaultColor()
         this.refresh()
     }
 }

@@ -1,3 +1,3 @@
 package demo.domain
 
-class Bishop(figureColor: FigureColor) : Figure(figureColor) 
+class Bishop(figureColor: FigureColor, position: Position) : Figure(figureColor, position) 

@@ -3,35 +3,12 @@ package demo.console
 import demo.domain.*
 
 class Row {
-    private val boldWhite = "\u001b[1;97m"
-    private val boldBlack = "\u001b[1;90m"
-    
-    private val redBack = "\u001b[41m"
-    private val yellowBack = "\u001b[43m"
-    private val cyanBack = "\u001b[46m"
-    
     private val reset = "\u001b[0m"
 
     private val textures: MutableList<Texture> = mutableListOf()
 
     fun addTexture(texture: Texture) {
         textures.add(texture)
-    }
-
-    fun getLastTextureBackColor(): BackgroundColor {
-        return textures.last().backgroundColor;
-    }
-
-    fun getFirstTextureBackColor(): BackgroundColor {
-        return textures.first().backgroundColor;
-    }
-
-    fun getTwoTexturesOnLeftBackColor(currentPosition: Position): BackgroundColor {
-        return textures.first().backgroundColor;
-    }
-
-    fun isEmpty(): Boolean {
-        return textures.isEmpty()
     }
 
     fun render() {
@@ -41,20 +18,20 @@ class Row {
             for (lineIndex in 0 until textures[0].content.size) {
                 var lineContent = ""
                 for (texture in textures) {
-
-
+                    
                     lineContent += when (texture.backgroundColor) {
-                        BackgroundColor.RED -> redBack
-                        BackgroundColor.YELLOW -> yellowBack
-                        BackgroundColor.CYAN -> cyanBack
+                        BackgroundColor.BLUE -> "\u001b[48;5;67m"
+                        BackgroundColor.ORANGE -> "\u001b[48;5;173m"
+                        BackgroundColor.IVORY -> "\u001b[48;5;189m"
+                        BackgroundColor.RED -> "\u001b[48;5;161m"
+                        BackgroundColor.GREEN -> "\u001b[48;5;71m"
                     }
 
                     lineContent += when (texture.color) {
-                        FigureColor.WHITE -> boldWhite
-                        FigureColor.BLACK -> boldBlack
+                        FigureColor.WHITE -> "\u001b[1;97m"
+                        FigureColor.BLACK -> "\u001b[1;90m"
                         else -> ""
                     }
-
 
                     lineContent += texture.content[lineIndex] + reset
                 }
