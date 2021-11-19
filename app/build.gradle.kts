@@ -2,11 +2,11 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.5.31"
 
-    application // <2>
+    application
 }
 
 repositories {
-    mavenCentral() // <3>
+    mavenCentral()
 }
 
 dependencies {
