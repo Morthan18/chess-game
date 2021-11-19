@@ -1,6 +1,6 @@
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.5.31" // <1>
+    id("org.jetbrains.kotlin.jvm") version "1.5.31"
 
     application // <2>
 }
@@ -10,15 +10,15 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom")) // <4>
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     api("com.1stleg:jnativehook:2.0.2")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8") // <5>
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("com.google.guava:guava:30.1.1-jre") // <6>
+    implementation("com.google.guava:guava:30.1.1-jre")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test") // <7>
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit") // <8>
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 val fatJar = task("fatJar", type = Jar::class) {
@@ -38,5 +38,5 @@ tasks {
     }
 }
 application {
-    mainClass.set("demo.MainKt") // <9>
+    mainClass.set("demo.MainKt")
 }
