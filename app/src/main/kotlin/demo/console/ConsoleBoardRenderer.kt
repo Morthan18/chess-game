@@ -1,6 +1,7 @@
 package demo.console
 
 import demo.domain.*
+import demo.domain.Board.Companion.BOARD_SIDE_LENGTH
 import org.jnativehook.GlobalScreen
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -50,9 +51,9 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         val loader = ResourcesLoader()
         val rowsToRender: MutableList<Row> = mutableListOf()
 
-        for (y in 7 downTo 0) {
+        for (y in BOARD_SIDE_LENGTH downTo 0) {
             val currentRow = Row()
-            for (x in 0..7) {
+            for (x in 0..BOARD_SIDE_LENGTH) {
                 val figure: Figure? = board.findFigure(Position(x, y))
                 val texture: Texture = if (figure != null) {
                     when (figure) {

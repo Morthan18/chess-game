@@ -103,22 +103,4 @@ class PawnEngine(board: Board) : FigureEngine(board) {
             }
         }
     }
-
-    private fun isPositionFree(position: Position): Boolean {
-        return this.board.findFigure(position) == null
-    }
-
-    private fun isBlackOnPosition(position: Position): Boolean {
-        val figure: Figure? = this.board.findFigure(position)
-        return figure != null && figure.isBlack()
-    }
-
-    private fun isWhiteOnPosition(position: Position): Boolean {
-        val figure: Figure? = this.board.findFigure(position)
-        return figure != null && figure.isWhite()
-    }
-
-    private fun areXPositionsEqual(position1: Position, position2: Position): Boolean {
-        return position1.x == position2.x
-    }
 }

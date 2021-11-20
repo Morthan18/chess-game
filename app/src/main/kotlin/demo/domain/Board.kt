@@ -6,6 +6,10 @@ class Board {
     private val figures: MutableList<Figure> = figuresInitPosition
     private val chessEngine: ChessEngine = ChessEngine(this)
 
+    companion object {
+        val BOARD_SIDE_LENGTH: Int = 7
+    }
+
     fun makeMove(figure: Figure, toPosition: Position) {
         val figureToMove: Figure? = findFigure(figure.position)
 
