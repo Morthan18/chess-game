@@ -1,5 +1,7 @@
 package demo.domain
 
+import demo.domain.chessengine.ChessEngine
+
 class Board {
     private val figures: MutableList<Figure> = figuresInitPosition
     private val chessEngine: ChessEngine = ChessEngine(this)

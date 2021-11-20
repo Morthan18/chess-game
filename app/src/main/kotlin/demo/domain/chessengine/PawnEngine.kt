@@ -1,22 +1,18 @@
-package demo.domain
+package demo.domain.chessengine
 
-class ChessEngine(private val board: Board) {
+import demo.domain.*
 
-    fun isMoveLegal(figure: Figure, toPosition: Position): Boolean {
-        return when (figure) {
-            is Pawn -> {
-                return if (figure.alreadyMoved) {
-                    pawnEveryNextMove(figure, toPosition)
-                } else {
-                    pawnFirstMove(figure, toPosition)
-                }
-            }
-            else -> false
+class PawnEngine(board: Board) : FigureEngine(board) {
+    override fun isMoveLegal(f: Figure, toPosition: Position): Boolean {
+        val figure = f as Pawn
+        return if (figure.alreadyMoved) {
+            validateEveryNextMove(figure, toPosition)
+        } else {
+            validateFirstMove(figure, toPosition)
         }
-
     }
 
-    private fun pawnFirstMove(figure: Figure, toPosition: Position): Boolean {
+    private fun validateFirstMove(figure: Figure, toPosition: Position): Boolean {
         if (!areXPositionsEqual(toPosition, figure.position)) {
             return when (figure.figureColor) {
                 FigureColor.WHITE -> {
@@ -56,11 +52,12 @@ class ChessEngine(private val board: Board) {
                 }
             }
             FigureColor.BLACK -> {
+                val isMoveAt1Field: Boolean = figure.position.y - toPosition.y == 1
                 val isMoveAt2Fields: Boolean = figure.position.y - toPosition.y == 2
                 if (isMoveAt2Fields && areXPositionsEqual(toPosition, figure.position)) {
                     val isPreviousFieldFree: Boolean = isPositionFree(Position(toPosition.x, toPosition.y + 1))
                     isPositionFree(toPosition) && isPreviousFieldFree
-                } else if (areXPositionsEqual(toPosition, figure.position)) {
+                } else if (isMoveAt1Field) {
                     isPositionFree(toPosition)
                 } else {
                     false
@@ -69,7 +66,7 @@ class ChessEngine(private val board: Board) {
         }
     }
 
-    private fun pawnEveryNextMove(figure: Figure, toPosition: Position): Boolean {
+    private fun validateEveryNextMove(figure: Figure, toPosition: Position): Boolean {
         val figurePositionX: Int = figure.position.x
         val figurePositionY: Int = figure.position.y
         if (!areXPositionsEqual(toPosition, figure.position)) {
@@ -124,5 +121,4 @@ class ChessEngine(private val board: Board) {
     private fun areXPositionsEqual(position1: Position, position2: Position): Boolean {
         return position1.x == position2.x
     }
-
 }

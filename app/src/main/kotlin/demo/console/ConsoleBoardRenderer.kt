@@ -46,6 +46,62 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         this.refresh()
     }
 
+    override fun render() {
+        val loader = ResourcesLoader()
+        val rowsToRender: MutableList<Row> = mutableListOf()
+
+        for (y in 7 downTo 0) {
+            val currentRow = Row()
+            for (x in 0..7) {
+                val figure: Figure? = board.findFigure(Position(x, y))
+                val texture: Texture = if (figure != null) {
+                    when (figure) {
+                        is Rook -> loader.getRook(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Pawn -> loader.getPawn(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Knight -> loader.getKnight(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Bishop -> loader.getBishop(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Queen -> loader.getQueen(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is King -> loader.getKing(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        else -> throw RuntimeException("Unknown figure")
+                    }
+                } else {
+                    loader.getEmptyField(chooseBackgroundColor(Position(x, y)))
+                }
+                currentRow.addTexture(texture)
+            }
+            rowsToRender.add(currentRow)
+        }
+        print(cleanConsole)
+
+        rowsToRender.forEach { row -> row.render() }
+    }
+
+    override fun selectFigure() {
+        val actualMarkedFigure: Figure? = board.findFigure(cursor.position)
+
+        val otherMarkedFigures = board.findAllMarkedFiguresExcept(actualMarkedFigure)
+        if (otherMarkedFigures.isNotEmpty()) {
+            val figureToMove = otherMarkedFigures[0]
+            if (board.isMoveLegal(figureToMove, cursor.position)) {
+                board.makeMove(figureToMove, cursor.position)
+                cursor.setDefaultColor()
+                figureToMove.isMarked = false
+            }
+        } else {
+            actualMarkedFigure?.isMarked = true
+//            if (otherMarkedFigures.isNotEmpty()) {
+//                otherMarkedFigures.forEach { f -> f.isMarked = false }
+//            }
+        }
+        this.refresh()
+    }
+
+    override fun unmarkFigure() {
+        board.findAnyMarkedFigure()?.isMarked = false
+        cursor.setDefaultColor()
+        this.refresh()
+    }
+
     private fun changeCursorColorIfMoveIntention() {
         val figure: Figure? = this.board.findAnyMarkedFigure()
         if (figure != null) {
@@ -85,61 +141,5 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
                 BackgroundColor.BLUE
             }
         }
-    }
-
-    override fun render() {
-        val loader = ResourcesLoader()
-        val previousRows: MutableList<Row> = mutableListOf()
-
-        for (y in 7 downTo 0) {
-            val currentRow = Row()
-            for (x in 0..7) {
-                val figure: Figure? = board.findFigure(Position(x, y))
-                val texture: Texture = if (figure != null) {
-                    when (figure) {
-                        is Rook -> loader.getRook(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Pawn -> loader.getPawn(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Knight -> loader.getKnight(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Bishop -> loader.getBishop(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Queen -> loader.getQueen(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is King -> loader.getKing(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        else -> throw RuntimeException("Unknown figure")
-                    }
-                } else {
-                    loader.getEmptyField(chooseBackgroundColor(Position(x, y)))
-                }
-                currentRow.addTexture(texture)
-            }
-            previousRows.add(currentRow)
-        }
-        print(cleanConsole)
-
-        previousRows.forEach { row -> row.render() }
-    }
-
-    override fun selectFigure() {
-        val actualMarkedFigure: Figure? = board.findFigure(cursor.position)
-
-        val otherMarkedFigures = board.findAllMarkedFiguresExcept(actualMarkedFigure)
-        if (otherMarkedFigures.isNotEmpty()) {
-            val figureToMove = otherMarkedFigures[0]
-            if (board.isMoveLegal(figureToMove, cursor.position)) {
-                board.makeMove(figureToMove, cursor.position)
-                cursor.setDefaultColor()
-                figureToMove.isMarked = false
-            }
-        } else {
-            actualMarkedFigure?.isMarked = true
-//            if (otherMarkedFigures.isNotEmpty()) {
-//                otherMarkedFigures.forEach { f -> f.isMarked = false }
-//            }
-        }
-        this.refresh()
-    }
-
-    override fun unmarkFigure() {
-        board.findAnyMarkedFigure()?.isMarked = false
-        cursor.setDefaultColor()
-        this.refresh()
     }
 }
