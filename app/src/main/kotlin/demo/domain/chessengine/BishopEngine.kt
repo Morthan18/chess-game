@@ -1,7 +1,10 @@
 package demo.domain.chessengine
 
-import demo.domain.*
+import demo.domain.Bishop
+import demo.domain.Board
 import demo.domain.Board.Companion.BOARD_SIDE_LENGTH
+import demo.domain.Figure
+import demo.domain.Position
 
 class BishopEngine(board: Board) : FigureEngine(board) {
     override fun isMoveLegal(f: Figure, toPosition: Position): Boolean {
@@ -14,7 +17,6 @@ class BishopEngine(board: Board) : FigureEngine(board) {
         legalMoves.addAll(findLegalMovesLeftUp(figure))
         legalMoves.addAll(findLegalMovesLeftDown(figure))
 
-
         return legalMoves.contains(toPosition)
     }
 
@@ -25,7 +27,7 @@ class BishopEngine(board: Board) : FigureEngine(board) {
         var x = figurePosition.x + 1
         var y = figurePosition.y + 1
         while (x <= BOARD_SIDE_LENGTH || y <= BOARD_SIDE_LENGTH) {
-            if (validateDiagonal(x, y, legalPositions, figure)) break
+            if (validateLine(x, y, legalPositions, figure)) break
             x++
             y++
         }
@@ -39,7 +41,7 @@ class BishopEngine(board: Board) : FigureEngine(board) {
         var x = figurePosition.x + 1
         var y = figurePosition.y - 1
         while (x <= BOARD_SIDE_LENGTH || y >= 0) {
-            if (validateDiagonal(x, y, legalPositions, figure)) break
+            if (validateLine(x, y, legalPositions, figure)) break
             x++
             y--
         }
@@ -54,7 +56,7 @@ class BishopEngine(board: Board) : FigureEngine(board) {
         var x = figurePosition.x - 1
         var y = figurePosition.y + 1
         while (x >= 0 || y <= BOARD_SIDE_LENGTH) {
-            if (validateDiagonal(x, y, legalPositions, figure)) break
+            if (validateLine(x, y, legalPositions, figure)) break
             x--
             y++
         }
@@ -68,44 +70,10 @@ class BishopEngine(board: Board) : FigureEngine(board) {
         var x = figurePosition.x - 1
         var y = figurePosition.y - 1
         while (x >= 0 || y >= 0) {
-            if (validateDiagonal(x, y, legalPositions, figure)) break
+            if (validateLine(x, y, legalPositions, figure)) break
             x--
             y--
         }
         return legalPositions
-    }
-
-    private fun validateDiagonal(
-        x: Int,
-        y: Int,
-        legalPositions: MutableList<Position>,
-        figure: Bishop
-    ): Boolean {
-        val currentPosition = Position(x, y)
-        val foundFigure: Figure? = board.findFigure(currentPosition)
-
-        if (foundFigure == null) {
-            legalPositions.add(currentPosition)
-        }
-
-        when (figure.figureColor) {
-            FigureColor.WHITE -> {
-                if (isBlackOnPosition(currentPosition)) {
-                    legalPositions.add(currentPosition)
-                    return true
-                } else if (isWhiteOnPosition(currentPosition)) {
-                    return true
-                }
-            }
-            FigureColor.BLACK -> {
-                if (isWhiteOnPosition(currentPosition)) {
-                    legalPositions.add(currentPosition)
-                    return true
-                } else if (isBlackOnPosition(currentPosition)) {
-                    return true
-                }
-            }
-        }
-        return false
     }
 }
