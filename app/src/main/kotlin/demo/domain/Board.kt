@@ -7,7 +7,7 @@ class Board {
     private val chessEngine: ChessEngine = ChessEngine(this)
 
     companion object {
-        val BOARD_SIDE_LENGTH: Int = 7
+        const val BOARD_SIDE_LENGTH: Int = 7
     }
 
     fun makeMove(figure: Figure, toPosition: Position) {
