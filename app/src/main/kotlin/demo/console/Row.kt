@@ -1,6 +1,7 @@
 package demo.console
 
-import demo.domain.*
+import demo.domain.BackgroundColor
+import demo.domain.FigureColor
 
 class Row {
     private val reset = "\u001b[0m"
@@ -25,6 +26,7 @@ class Row {
                         BackgroundColor.IVORY -> "\u001b[48;5;189m"
                         BackgroundColor.RED -> "\u001b[48;5;161m"
                         BackgroundColor.GREEN -> "\u001b[48;5;71m"
+                        BackgroundColor.GRAY -> "\u001b[48;5;60m"
                     }
 
                     lineContent += when (texture.color) {

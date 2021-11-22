@@ -1,6 +1,7 @@
 package demo.console
 
 import demo.domain.BackgroundColor
+import demo.domain.PlayerTurn
 import demo.domain.Position
 
 
@@ -33,8 +34,12 @@ class Cursor(var position: Position, var color: BackgroundColor = BackgroundColo
             this.position = Position(this.position.x, this.position.y - 1)
         }
     }
-    
-    fun setDefaultColor() {
-        this.color = BackgroundColor.IVORY
+
+    fun setColorBasedOnPlayerTurn(playerTurn: PlayerTurn) {
+        this.color = if (playerTurn == PlayerTurn.WHITE) {
+            BackgroundColor.IVORY
+        } else {
+            BackgroundColor.GRAY
+        }
     }
 }

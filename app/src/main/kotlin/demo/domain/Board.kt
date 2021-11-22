@@ -5,6 +5,7 @@ import demo.domain.chessengine.ChessEngine
 class Board {
     private val figures: MutableList<Figure> = figuresInitPosition
     private val chessEngine: ChessEngine = ChessEngine(this)
+    var playerTurn: PlayerTurn = PlayerTurn.WHITE
 
     companion object {
         const val BOARD_SIDE_LENGTH: Int = 7
@@ -23,9 +24,19 @@ class Board {
         if (figureToMove != null && figureToMove is Pawn) {
             figureToMove.alreadyMoved = true
         }
+
+        playerTurn = if (playerTurn == PlayerTurn.WHITE) {
+            PlayerTurn.BLACK
+        } else {
+            PlayerTurn.WHITE
+        }
     }
 
     fun isMoveLegal(figure: Figure, toPosition: Position): Boolean {
+        if (figure.figureColor.toString() != playerTurn.toString()) {
+            return false
+        }
+
         return chessEngine.isMoveLegal(figure, toPosition)
     }
 

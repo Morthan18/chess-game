@@ -85,21 +85,18 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
             val figureToMove = otherMarkedFigures[0]
             if (board.isMoveLegal(figureToMove, cursor.position)) {
                 board.makeMove(figureToMove, cursor.position)
-                cursor.setDefaultColor()
+                cursor.setColorBasedOnPlayerTurn(board.playerTurn)
                 figureToMove.isMarked = false
             }
         } else {
             actualMarkedFigure?.isMarked = true
-//            if (otherMarkedFigures.isNotEmpty()) {
-//                otherMarkedFigures.forEach { f -> f.isMarked = false }
-//            }
         }
         this.refresh()
     }
 
     override fun unmarkFigure() {
         board.findAnyMarkedFigure()?.isMarked = false
-        cursor.setDefaultColor()
+        cursor.setColorBasedOnPlayerTurn(board.playerTurn)
         this.refresh()
     }
 
