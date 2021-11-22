@@ -4,6 +4,7 @@ import demo.domain.*
 
 class KnightEngine(board: Board) : FigureEngine(board) {
 
+    @Suppress("UNREACHABLE_CODE")
     override fun isMoveLegal(f: Figure, toPosition: Position): Boolean {
         val knight: Knight = f as Knight
         val possiblePositions = getPossiblePositions(knight)

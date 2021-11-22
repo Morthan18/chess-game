@@ -20,7 +20,7 @@ class PawnEngine(board: Board) : FigureEngine(board) {
                             && figure.position.y + 1 == toPosition.y
                             && isBlackOnPosition(toPosition)
                             )
-                            || (figure.position.x - 1 == toPosition.x
+                            || (figure.position.x + 1 == toPosition.x
                             && figure.position.y + 1 == toPosition.y
                             && isBlackOnPosition(toPosition)
                             )
@@ -30,7 +30,7 @@ class PawnEngine(board: Board) : FigureEngine(board) {
                             && figure.position.y - 1 == toPosition.y
                             && isWhiteOnPosition(toPosition)
                             )
-                            || (figure.position.x - 1 == toPosition.x
+                            || (figure.position.x + 1 == toPosition.x
                             && figure.position.y - 1 == toPosition.y
                             && isWhiteOnPosition(toPosition)
                             )

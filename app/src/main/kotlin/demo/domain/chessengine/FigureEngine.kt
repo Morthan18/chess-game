@@ -26,7 +26,112 @@ abstract class FigureEngine(protected val board: Board) {
         return position1.x == position2.x
     }
 
-    protected fun validateLine(
+    protected fun findLegalMovesRightUp(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x + 1
+        var y = figurePosition.y + 1
+        while (x <= Board.BOARD_SIDE_LENGTH || y <= Board.BOARD_SIDE_LENGTH) {
+            if (validateLine(x, y, legalPositions, figure)) break
+            x++
+            y++
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesRightDown(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x + 1
+        var y = figurePosition.y - 1
+        while (x <= Board.BOARD_SIDE_LENGTH || y >= 0) {
+            if (validateLine(x, y, legalPositions, figure)) break
+            x++
+            y--
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesLeftUp(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x - 1
+        var y = figurePosition.y + 1
+        while (x >= 0 || y <= Board.BOARD_SIDE_LENGTH) {
+            if (validateLine(x, y, legalPositions, figure)) break
+            x--
+            y++
+        }
+        return legalPositions
+    }
+
+
+    protected fun findLegalMovesLeftDown(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x - 1
+        var y = figurePosition.y - 1
+        while (x >= 0 || y >= 0) {
+            if (validateLine(x, y, legalPositions, figure)) break
+            x--
+            y--
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesRight(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x + 1
+        while (x <= Board.BOARD_SIDE_LENGTH) {
+            if (validateLine(x, figurePosition.y, legalPositions, figure)) break
+            x++
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesLeft(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var x = figurePosition.x - 1
+        while (x >= 0) {
+            if (validateLine(x, figurePosition.y, legalPositions, figure)) break
+            x--
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesUp(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var y = figurePosition.y + 1
+        while (y <= Board.BOARD_SIDE_LENGTH) {
+            if (validateLine(figurePosition.x, y, legalPositions, figure)) break
+            y++
+        }
+        return legalPositions
+    }
+
+    protected fun findLegalMovesDown(figure: Figure): List<Position> {
+        val figurePosition: Position = figure.position
+        val legalPositions: MutableList<Position> = mutableListOf()
+
+        var y = figurePosition.y - 1
+        while (y >= 0) {
+            if (validateLine(figurePosition.x, y, legalPositions, figure)) break
+            y--
+        }
+        return legalPositions
+    }
+
+    private fun validateLine(
         x: Int,
         y: Int,
         legalPositions: MutableList<Position>,
