@@ -8,6 +8,7 @@ class ChessEngine(board: Board) {
     private val rookEngine = RookEngine(board)
     private val knightEngine = KnightEngine(board)
     private val queenEngine = QueenEngine(board)
+    private val kingEngine = KingEngine(board)
 
 
     fun isMoveLegal(figure: Figure, toPosition: Position): Boolean {
@@ -17,6 +18,7 @@ class ChessEngine(board: Board) {
             is Rook -> rookEngine
             is Knight -> knightEngine
             is Queen -> queenEngine
+            is King -> kingEngine
             else -> null
         }
         return figureEngine!!.isMoveLegal(figure, toPosition)
