@@ -1,10 +1,7 @@
 package demo.domain
 
-import demo.domain.chessengine.ChessEngine
-
 class Board {
-    private val figures: MutableList<Figure> = figuresInitPosition
-    private val chessEngine: ChessEngine = ChessEngine(this)
+    private val figures: MutableList<Figure> = figuresInitPosition(this)
     var playerTurn: PlayerTurn = PlayerTurn.WHITE
 
     companion object {
@@ -37,7 +34,86 @@ class Board {
             return false
         }
 
-        return chessEngine.isMoveLegal(figure, toPosition)
+        val checkValidation = validateCheckOnKing()
+        if (checkValidation.check) {
+            val attackingFigure = checkValidation.attackingFigure
+            val kingPosition = getCurrentPlayerKingPosition()
+
+            val fieldsAvailableToBlock = when (attackingFigure) {
+                is Bishop -> getFieldsAvailableToBlock(attackingFigure, kingPosition)
+//                is Knight -> 
+//                is Pawn -> 
+//                is Queen -> 
+//                is Rook -> 
+                else -> emptyList()
+            }
+
+            if (fieldsAvailableToBlock.contains(toPosition)) {
+                return true
+            }
+
+            return false
+        }
+
+        return figure.getLegalMoves().contains(toPosition)
+    }
+
+    private fun getFieldsAvailableToBlock(
+        attackingFigure: Figure,
+        kingPosition: Position
+    ): List<Position> {
+        val attackingFigureMoves: List<Position> = attackingFigure.getLegalMoves()
+        val kingPositionX = kingPosition.x
+        val kingPositionY = kingPosition.y
+
+        var x = attackingFigure.position.x;
+        var y = attackingFigure.position.y;
+
+        val fieldsAvailableToBlock: MutableList<Position> = mutableListOf()
+
+        for (pos in attackingFigureMoves) {
+            if (kingPositionX > pos.x) {
+                x++
+            } else {
+                x--
+            }
+            if (kingPositionY > pos.y) {
+                y++
+            } else {
+                y--
+            }
+
+            if (x == kingPositionX || y == kingPositionY) {
+                break
+            }
+
+            fieldsAvailableToBlock.add(Position(x, y))
+        }
+
+        return fieldsAvailableToBlock
+    }
+
+    private fun validateCheckOnKing(): CheckValidationResult {
+        val figuresForColor = when (playerTurn) {
+            PlayerTurn.WHITE -> findAllFigures(FigureColor.BLACK)
+            PlayerTurn.BLACK -> findAllFigures(FigureColor.WHITE)
+        }
+
+        val checkingFigures = figuresForColor
+            .filter { figure -> figure.getLegalMoves().contains(getCurrentPlayerKingPosition()) }
+
+        if (checkingFigures.isEmpty()) {
+            return CheckValidationResult(false)
+        }
+
+        return CheckValidationResult(true, checkingFigures.first())
+    }
+
+    private fun getCurrentPlayerKingPosition(): Position {
+        return when (playerTurn) {
+            PlayerTurn.WHITE -> findKing(FigureColor.WHITE)
+            PlayerTurn.BLACK -> findKing(FigureColor.BLACK)
+        }.position
     }
 
     fun findFigure(position: Position): Figure? {
@@ -52,5 +128,13 @@ class Board {
 
     fun findAnyMarkedFigure(): Figure? {
         return figures.find { f -> f.isMarked }
+    }
+
+    fun findAllFigures(figureColor: FigureColor): List<Figure> {
+        return figures.filter { figure -> figure.figureColor == figureColor }
+    }
+
+    fun findKing(figureColor: FigureColor): King {
+        return figures.first { figure -> figure is King && figure.figureColor == figureColor } as King
     }
 }
