@@ -40,19 +40,19 @@ class Pawn(
             if (validateLine(figurePosition.x, y, legalPositions)) break
             y++
         }
-        return legalPositions
+        return legalPositions.filter { position -> isPositionFree(position) }
     }
 
     private fun findLegalMoves1FieldDown(): List<Position> {
         val figurePosition: Position = this.position
         val legalPositions: MutableList<Position> = mutableListOf()
 
-        var y = figurePosition.y + 1
-        while (y <= Board.BOARD_SIDE_LENGTH && y - figurePosition.y <= 1) {
+        var y = figurePosition.y - 1
+        while (y <= Board.BOARD_SIDE_LENGTH && figurePosition.y - y <= 1) {
             if (validateLine(figurePosition.x, y, legalPositions)) break
-            y++
+            y--
         }
-        return legalPositions
+        return legalPositions.filter { position -> isPositionFree(position) }
     }
 
     private fun findLegalMoves2FieldsUp(): List<Position> {
@@ -64,7 +64,7 @@ class Pawn(
             if (validateLine(figurePosition.x, y, legalPositions)) break
             y++
         }
-        return legalPositions
+        return legalPositions.filter { position -> isPositionFree(position) }
     }
 
     private fun findLegalMoves2FieldsDown(): List<Position> {
@@ -76,7 +76,7 @@ class Pawn(
             if (validateLine(figurePosition.x, y, legalPositions)) break
             y--
         }
-        return legalPositions
+        return legalPositions.filter { position -> isPositionFree(position) }
     }
 
     private fun findLegalMoves1FieldRightUp(): List<Position> {
@@ -110,7 +110,7 @@ class Pawn(
         var y = figurePosition.y - 1
         while (y <= Board.BOARD_SIDE_LENGTH && figurePosition.y - y <= 1) {
             if (validateLine(figurePosition.x + 1, y, legalPositions)) break
-            y++
+            y--
         }
         return legalPositions.filter { position -> isWhiteOnPosition(position) }
     }

@@ -40,10 +40,10 @@ class Board {
             val kingPosition = getCurrentPlayerKingPosition()
 
             val fieldsAvailableAtCheck = when (attackingFigure) {
-                is Bishop -> getFieldsAvailableToBlock(attackingFigure, kingPosition)
+                is Bishop -> getFieldsAvailableToBlockOblique(attackingFigure, kingPosition)
                 is Knight -> listOf(attackingFigure.position)
                 is Pawn -> listOf(attackingFigure.position)
-//                is Queen -> 
+                is Queen -> getFieldsAvailableToBlockObliqueAndStraight(attackingFigure, kingPosition)
 //                is Rook -> 
                 else -> emptyList()
             }
@@ -64,8 +64,57 @@ class Board {
         return figure.getLegalMoves().contains(toPosition)
     }
 
-    private fun getFieldsAvailableToBlock(
-        attackingFigure: Bishop,
+    private fun getFieldsAvailableToBlockObliqueAndStraight(
+        attackingFigure: Queen,
+        kingPosition: Position
+    ): List<Position> {
+        val fieldsAvailableToBlockOblique = getFieldsAvailableToBlockOblique(attackingFigure, kingPosition)
+        val fieldsAvailableToBlockStraight = getFieldsAvailableToBlockStraight(attackingFigure, kingPosition)
+
+        return if (fieldsAvailableToBlockOblique.contains(attackingFigure.position)) {
+            fieldsAvailableToBlockOblique
+        } else {
+            listOf(fieldsAvailableToBlockStraight, listOf(attackingFigure.position)).flatten()
+        }
+    }
+
+    private fun getFieldsAvailableToBlockStraight(
+        attackingFigure: Figure,
+        kingPosition: Position
+    ): List<Position> {
+        val kingPositionX = kingPosition.x
+        val kingPositionY = kingPosition.y
+
+        var x = attackingFigure.position.x
+        var y = attackingFigure.position.y
+
+        val fieldsAvailableToBlock: MutableList<Position> = mutableListOf()
+
+        while (x == kingPositionX && y != kingPositionY) {
+            if (kingPositionX == x) {
+                if (kingPositionY > y) {
+                    y++
+                } else {
+                    y--
+                }
+            } else {
+                if (kingPositionX > x) {
+                    x++
+                } else {
+                    y--
+                }
+            }
+            if (x == kingPositionX && y == kingPositionY) {
+                break
+            }
+            fieldsAvailableToBlock.add(Position(x, y))
+        }
+
+        return fieldsAvailableToBlock
+    }
+
+    private fun getFieldsAvailableToBlockOblique(
+        attackingFigure: Figure,
         kingPosition: Position
     ): List<Position> {
         val attackingFigureMoves: List<Position> = attackingFigure.getLegalMoves()
