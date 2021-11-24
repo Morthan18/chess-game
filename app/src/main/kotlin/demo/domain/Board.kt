@@ -42,7 +42,7 @@ class Board {
             val fieldsAvailableAtCheck = when (attackingFigure) {
                 is Bishop -> getFieldsAvailableToBlock(attackingFigure, kingPosition)
                 is Knight -> listOf(attackingFigure.position)
-//                is Pawn -> 
+                is Pawn -> listOf(attackingFigure.position)
 //                is Queen -> 
 //                is Rook -> 
                 else -> emptyList()
