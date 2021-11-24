@@ -37,16 +37,18 @@ class Board {
         val checkValidation = validateCheckOnKing()
         if (checkValidation.check) {
             val attackingFigure = checkValidation.attackingFigure
-            val kingPosition = getCurrentPlayerKingPosition()
+            var fieldsAvailableAtCheck =
+                when (attackingFigure) {
+                    is Bishop -> getFieldsAvailableToBlockOblique(attackingFigure)
+                    is Knight -> listOf(attackingFigure.position)
+                    is Pawn -> listOf(attackingFigure.position)
+                    is Queen -> getFieldsAvailableToBlockObliqueAndStraight(attackingFigure)
+                    is Rook -> getFieldsAvailableToBlockStraight(attackingFigure)
+                    is King -> emptyList()
+                    else -> emptyList()
+                }
 
-            val fieldsAvailableAtCheck = when (attackingFigure) {
-                is Bishop -> getFieldsAvailableToBlockOblique(attackingFigure, kingPosition)
-                is Knight -> listOf(attackingFigure.position)
-                is Pawn -> listOf(attackingFigure.position)
-                is Queen -> getFieldsAvailableToBlockObliqueAndStraight(attackingFigure, kingPosition)
-//                is Rook -> 
-                else -> emptyList()
-            }
+            fieldsAvailableAtCheck = listOf(fieldsAvailableAtCheck, listOf(attackingFigure!!.position)).flatten()
 
             if (figure !is King
                 && figure.getLegalMoves().contains(toPosition)
@@ -64,12 +66,9 @@ class Board {
         return figure.getLegalMoves().contains(toPosition)
     }
 
-    private fun getFieldsAvailableToBlockObliqueAndStraight(
-        attackingFigure: Queen,
-        kingPosition: Position
-    ): List<Position> {
-        val fieldsAvailableToBlockOblique = getFieldsAvailableToBlockOblique(attackingFigure, kingPosition)
-        val fieldsAvailableToBlockStraight = getFieldsAvailableToBlockStraight(attackingFigure, kingPosition)
+    private fun getFieldsAvailableToBlockObliqueAndStraight(attackingFigure: Figure): List<Position> {
+        val fieldsAvailableToBlockOblique = getFieldsAvailableToBlockOblique(attackingFigure)
+        val fieldsAvailableToBlockStraight = getFieldsAvailableToBlockStraight(attackingFigure)
 
         return if (fieldsAvailableToBlockOblique.contains(attackingFigure.position)) {
             fieldsAvailableToBlockOblique
@@ -78,10 +77,8 @@ class Board {
         }
     }
 
-    private fun getFieldsAvailableToBlockStraight(
-        attackingFigure: Figure,
-        kingPosition: Position
-    ): List<Position> {
+    private fun getFieldsAvailableToBlockStraight(attackingFigure: Figure): List<Position> {
+        val kingPosition = getCurrentPlayerKingPosition()
         val kingPositionX = kingPosition.x
         val kingPositionY = kingPosition.y
 
@@ -113,11 +110,9 @@ class Board {
         return fieldsAvailableToBlock
     }
 
-    private fun getFieldsAvailableToBlockOblique(
-        attackingFigure: Figure,
-        kingPosition: Position
-    ): List<Position> {
+    private fun getFieldsAvailableToBlockOblique(attackingFigure: Figure): List<Position> {
         val attackingFigureMoves: List<Position> = attackingFigure.getLegalMoves()
+        val kingPosition = getCurrentPlayerKingPosition()
         val kingPositionX = kingPosition.x
         val kingPositionY = kingPosition.y
 
