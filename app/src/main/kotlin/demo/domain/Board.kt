@@ -39,18 +39,24 @@ class Board {
             val attackingFigure = checkValidation.attackingFigure
             val kingPosition = getCurrentPlayerKingPosition()
 
-            val fieldsAvailableToBlock = when (attackingFigure) {
+            val fieldsAvailableAtCheck = when (attackingFigure) {
                 is Bishop -> getFieldsAvailableToBlock(attackingFigure, kingPosition)
-//                is Knight -> 
+                is Knight -> listOf(attackingFigure.position)
 //                is Pawn -> 
 //                is Queen -> 
 //                is Rook -> 
                 else -> emptyList()
             }
 
-            if (fieldsAvailableToBlock.contains(toPosition)) {
+            if (figure !is King
+                && figure.getLegalMoves().contains(toPosition)
+                && fieldsAvailableAtCheck.contains(toPosition)
+            ) {
                 return true
             }
+
+
+
 
             return false
         }
@@ -59,7 +65,7 @@ class Board {
     }
 
     private fun getFieldsAvailableToBlock(
-        attackingFigure: Figure,
+        attackingFigure: Bishop,
         kingPosition: Position
     ): List<Position> {
         val attackingFigureMoves: List<Position> = attackingFigure.getLegalMoves()

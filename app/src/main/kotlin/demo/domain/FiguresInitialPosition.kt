@@ -7,7 +7,7 @@ fun figuresInitPosition(board: Board): MutableList<Figure> = mutableListOf(
     Bishop(FigureColor.BLACK, Position(2, 7), board),
     Queen(FigureColor.BLACK, Position(3, 7), board),
     King(FigureColor.BLACK, Position(4, 7), board),
-    Bishop(FigureColor.BLACK, Position(1, 3), board),
+    Bishop(FigureColor.BLACK, Position(6, 7), board),
     Knight(FigureColor.BLACK, Position(6, 7), board),
     Rook(FigureColor.BLACK, Position(7, 7), board),
 
