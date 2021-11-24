@@ -6,6 +6,10 @@ class Knight(figureColor: FigureColor, position: Position, board: Board) : Figur
         return getPossiblePositions()
     }
 
+    override fun clone(board: Board): Figure {
+        return Knight(figureColor, position, board)
+    }
+
     private fun getPossiblePositions(): List<Position> {
         val position: Position = this.position
         val x: Int = position.x

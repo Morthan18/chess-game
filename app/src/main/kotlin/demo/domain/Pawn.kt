@@ -31,6 +31,10 @@ class Pawn(
         return legalPositions
     }
 
+    override fun clone(board: Board): Figure {
+        return Pawn(figureColor, position, board)
+    }
+
     private fun findLegalMoves1FieldUp(): List<Position> {
         val figurePosition: Position = this.position
         val legalPositions: MutableList<Position> = mutableListOf()

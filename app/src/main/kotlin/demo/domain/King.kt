@@ -1,8 +1,13 @@
 package demo.domain
 
 class King(figureColor: FigureColor, position: Position, board: Board) : Figure(figureColor, position, board) {
+  
     override fun getLegalMoves(): List<Position> {
         return getPossiblePositions()
+    }
+
+    override fun clone(board: Board): Figure {
+        return King(figureColor, position, board)
     }
 
     private fun getPossiblePositions(): List<Position> {

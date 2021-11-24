@@ -8,6 +8,8 @@ abstract class Figure(
 ) {
 
     abstract fun getLegalMoves(): List<Position>
+    
+    abstract fun clone(board: Board) : Figure
 
     fun isWhite(): Boolean {
         return figureColor == FigureColor.WHITE

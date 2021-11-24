@@ -12,4 +12,8 @@ class Bishop(figureColor: FigureColor, position: Position, board: Board) : Figur
 
         return legalMoves
     }
+
+    override fun clone(board: Board): Figure {
+        return Bishop(figureColor, position, board)
+    }
 } 

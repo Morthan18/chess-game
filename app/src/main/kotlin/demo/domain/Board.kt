@@ -1,8 +1,11 @@
 package demo.domain
 
-class Board {
-    private val figures: MutableList<Figure> = figuresInitPosition(this)
-    var playerTurn: PlayerTurn = PlayerTurn.WHITE
+class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
+    private var figures: MutableList<Figure> = mutableListOf()
+
+    fun setFigures(figures: MutableList<Figure>) {
+        this.figures = figures;
+    }
 
     companion object {
         const val BOARD_SIDE_LENGTH: Int = 7
@@ -49,7 +52,7 @@ class Board {
 
             fieldsAvailableAtCheck = listOf(fieldsAvailableAtCheck, listOf(attackingFigure!!.position)).flatten()
 
-            if (figure is King && getFieldsNotAttackedByAnyFigure(figure).contains(toPosition)) {
+            if (figure is King && kingCanRunAwayFromCheck(figure, toPosition)) {
                 return true
             }
 
@@ -66,12 +69,24 @@ class Board {
         return figure.getLegalMoves().contains(toPosition)
     }
 
-    private fun getFieldsNotAttackedByAnyFigure(king: King): List<Position> {
+    private fun kingCanRunAwayFromCheck(king: King, moveIntention: Position): Boolean {
+        val futureBoard = Board(this.playerTurn)
+        futureBoard.setFigures(
+            this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
+        )
+        futureBoard.makeMove(king, moveIntention)
+
+        val fieldsNotAttacked1MoveInFuture = getFieldsNotAttackedByAnyFigure(king, futureBoard)
+
+        return fieldsNotAttacked1MoveInFuture.contains(moveIntention)
+    }
+
+    private fun getFieldsNotAttackedByAnyFigure(king: King, board: Board): List<Position> {
         val kingLegalMoves = king.getLegalMoves()
 
         val allFieldsAttackedByAllFigures = when (king.figureColor) {
-            FigureColor.WHITE -> findAllFigures(FigureColor.BLACK)
-            FigureColor.BLACK -> findAllFigures(FigureColor.WHITE)
+            FigureColor.WHITE -> board.findAllFigures(FigureColor.BLACK)
+            FigureColor.BLACK -> board.findAllFigures(FigureColor.WHITE)
         }.map { figure -> figure.getLegalMoves() }.flatten()
 
         return kingLegalMoves.filter { kingMove -> !allFieldsAttackedByAllFigures.contains(kingMove) }

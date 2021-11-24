@@ -11,4 +11,8 @@ class Rook(figureColor: FigureColor, position: Position, board: Board) : Figure(
 
         return legalMoves
     }
+
+    override fun clone(board: Board): Figure {
+        return Rook(figureColor, position, board)
+    }
 }

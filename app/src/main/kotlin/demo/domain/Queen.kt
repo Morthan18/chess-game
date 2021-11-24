@@ -15,4 +15,8 @@ class Queen(figureColor: FigureColor, position: Position, board: Board) : Figure
         legalMoves.addAll(findLegalMovesDown())
         return legalMoves;
     }
+
+    override fun clone(board: Board): Figure {
+        return Queen(figureColor, position, board)
+    }
 }
