@@ -44,11 +44,14 @@ class Board {
                     is Pawn -> listOf(attackingFigure.position)
                     is Queen -> getFieldsAvailableToBlockObliqueAndStraight(attackingFigure)
                     is Rook -> getFieldsAvailableToBlockStraight(attackingFigure)
-                    is King -> emptyList()
                     else -> emptyList()
                 }
 
             fieldsAvailableAtCheck = listOf(fieldsAvailableAtCheck, listOf(attackingFigure!!.position)).flatten()
+
+            if (figure is King && getFieldsNotAttackedByAnyFigure(figure).contains(toPosition)) {
+                return true
+            }
 
             if (figure !is King
                 && figure.getLegalMoves().contains(toPosition)
@@ -57,13 +60,21 @@ class Board {
                 return true
             }
 
-
-
-
             return false
         }
 
         return figure.getLegalMoves().contains(toPosition)
+    }
+
+    private fun getFieldsNotAttackedByAnyFigure(king: King): List<Position> {
+        val kingLegalMoves = king.getLegalMoves()
+
+        val allFieldsAttackedByAllFigures = when (king.figureColor) {
+            FigureColor.WHITE -> findAllFigures(FigureColor.BLACK)
+            FigureColor.BLACK -> findAllFigures(FigureColor.WHITE)
+        }.map { figure -> figure.getLegalMoves() }.flatten()
+
+        return kingLegalMoves.filter { kingMove -> !allFieldsAttackedByAllFigures.contains(kingMove) }
     }
 
     private fun getFieldsAvailableToBlockObliqueAndStraight(attackingFigure: Figure): List<Position> {
