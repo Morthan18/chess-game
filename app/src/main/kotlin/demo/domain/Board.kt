@@ -96,11 +96,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         val fieldsAvailableToBlockOblique = getFieldsAvailableToBlockOblique(attackingFigure)
         val fieldsAvailableToBlockStraight = getFieldsAvailableToBlockStraight(attackingFigure)
 
-        return if (fieldsAvailableToBlockOblique.contains(attackingFigure.position)) {
-            fieldsAvailableToBlockOblique
-        } else {
-            listOf(fieldsAvailableToBlockStraight, listOf(attackingFigure.position)).flatten()
-        }
+        return listOf(fieldsAvailableToBlockStraight, fieldsAvailableToBlockOblique).flatten()
     }
 
     private fun getFieldsAvailableToBlockStraight(attackingFigure: Figure): List<Position> {
