@@ -37,7 +37,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
             return false
         }
 
-        val checkValidation = validateCheckOnKing()
+        val checkValidation = validateCheckOnKing(this)
         if (checkValidation.check) {
             val attackingFigure = checkValidation.attackingFigure
             var fieldsAvailableAtCheck =
@@ -66,19 +66,34 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
             return false
         }
 
+        val futureBoard = getFutureBoard()
+        futureBoard.makeMove(figure, toPosition)
+        futureBoard.playerTurn = this.playerTurn
+        val futureCheckValidation = validateCheckOnKing(futureBoard)
+        if (futureCheckValidation.check) {
+            return false
+        }
+
+
+
         return figure.getLegalMoves().contains(toPosition)
     }
 
     private fun kingCanRunAwayFromCheck(king: King, moveIntention: Position): Boolean {
-        val futureBoard = Board(this.playerTurn)
-        futureBoard.setFigures(
-            this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
-        )
+        val futureBoard = getFutureBoard()
         futureBoard.makeMove(king, moveIntention)
 
         val fieldsNotAttacked1MoveInFuture = getFieldsNotAttackedByAnyFigure(king, futureBoard)
 
         return fieldsNotAttacked1MoveInFuture.contains(moveIntention)
+    }
+
+    private fun getFutureBoard(): Board {
+        val futureBoard = Board(this.playerTurn)
+        futureBoard.setFigures(
+            this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
+        )
+        return futureBoard
     }
 
     private fun getFieldsNotAttackedByAnyFigure(king: King, board: Board): List<Position> {
@@ -165,14 +180,14 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         return fieldsAvailableToBlock
     }
 
-    private fun validateCheckOnKing(): CheckValidationResult {
+    private fun validateCheckOnKing(board: Board): CheckValidationResult {
         val figuresForColor = when (playerTurn) {
-            PlayerTurn.WHITE -> findAllFigures(FigureColor.BLACK)
-            PlayerTurn.BLACK -> findAllFigures(FigureColor.WHITE)
+            PlayerTurn.WHITE -> board.findAllFigures(FigureColor.BLACK)
+            PlayerTurn.BLACK -> board.findAllFigures(FigureColor.WHITE)
         }
 
         val checkingFigures = figuresForColor
-            .filter { figure -> figure.getLegalMoves().contains(getCurrentPlayerKingPosition()) }
+            .filter { figure -> figure.getLegalMoves().contains(board.getCurrentPlayerKingPosition()) }
 
         if (checkingFigures.isEmpty()) {
             return CheckValidationResult(false)
