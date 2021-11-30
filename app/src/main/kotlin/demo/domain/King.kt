@@ -1,7 +1,7 @@
 package demo.domain
 
 class King(figureColor: FigureColor, position: Position, board: Board) : Figure(figureColor, position, board) {
-  
+
     override fun getLegalMoves(): List<Position> {
         return getPossiblePositions()
     }
@@ -27,10 +27,13 @@ class King(figureColor: FigureColor, position: Position, board: Board) : Figure(
             Position(x + 1, y),
             Position(x + 1, y - 1)
         )
-            .filter { position ->
+            .filter {
+                it.x >= 0 && it.x < 8 && it.y >= 0 && it.y < 8
+            }
+            .filter { 
                 when (this.figureColor) {
-                    FigureColor.WHITE -> isBlackOnPosition(position) || isPositionFree(position)
-                    FigureColor.BLACK -> isWhiteOnPosition(position) || isPositionFree(position)
+                    FigureColor.WHITE -> isBlackOnPosition(it) || isPositionFree(it)
+                    FigureColor.BLACK -> isWhiteOnPosition(it) || isPositionFree(it)
                 }
             }
     }

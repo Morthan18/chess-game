@@ -108,9 +108,33 @@ class ConsoleBoardRenderer(var board: Board) : BoardRenderer {
                 figureToMove.isMarked = false
             }
         } else {
-            actualMarkedFigure?.isMarked = true
+             actualMarkedFigure?.isMarked = true
         }
-        this.refresh()
+        if (board.isCheckMate()) {
+            print(cleanConsole)
+            if (board.playerTurn == PlayerTurn.BLACK) {
+                resourcesManager.getWhiteWinTexture(BackgroundColor.GRAY).content.forEach {
+                    println(it)
+                }
+            } else {
+                resourcesManager.getBlackWinTexture(BackgroundColor.GRAY).content.forEach {
+                    println(it)
+                }
+            }
+        } else if (board.isStaleMale()) {
+            print(cleanConsole)
+            if (board.playerTurn == PlayerTurn.BLACK) {
+                resourcesManager.getStaleMateOnBlackTexture(BackgroundColor.GRAY).content.forEach {
+                    println(it)
+                }
+            } else {
+                resourcesManager.getStaleMateOnWhiteTexture(BackgroundColor.GRAY).content.forEach {
+                    println(it)
+                }
+            }
+        } else {
+            this.refresh()
+        }
     }
 
     override fun unmarkFigure() {

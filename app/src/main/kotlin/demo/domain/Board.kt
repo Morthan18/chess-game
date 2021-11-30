@@ -2,7 +2,7 @@ package demo.domain
 
 class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
     var figures: MutableList<Figure> = mutableListOf()
-    
+
     companion object {
         const val BOARD_SIDE_LENGTH: Int = 7
     }
@@ -26,6 +26,40 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         } else {
             PlayerTurn.WHITE
         }
+    }
+
+    fun isCheckMate(): Boolean {
+        val checkValidation = validateCheckOnKing(this)
+        return if (checkValidation.check) {
+            val king = getCurrentPlayerKing(this)
+            king.getLegalMoves().none { move -> this.isMoveLegal(king, move) }
+        } else {
+            false
+        }
+    }
+
+    fun isStaleMale(): Boolean {
+        if (findAnyMarkedFigure() !=null){
+            return false
+        }
+        
+        val attackingFigures = when (playerTurn) {
+            PlayerTurn.WHITE -> this.findAllFigures(FigureColor.BLACK)
+            PlayerTurn.BLACK -> this.findAllFigures(FigureColor.WHITE)
+        }
+            .filter { figure -> figure.getLegalMoves().contains(this.getCurrentPlayerKingPosition(this)) }
+
+        val king = getCurrentPlayerKing(this)
+        val doesntHaveAnyMove = king.getLegalMoves().none { move -> this.isMoveLegal(king, move) }
+        val noOtherFigureToMove = when (playerTurn) {
+            PlayerTurn.WHITE -> this.findAllFigures(FigureColor.WHITE)
+            PlayerTurn.BLACK -> this.findAllFigures(FigureColor.BLACK)
+        }.all { figure ->
+            figure.getLegalMoves()
+                .none { move -> this.isMoveLegal(king, move) }
+        }
+
+        return attackingFigures.isEmpty() && doesntHaveAnyMove && noOtherFigureToMove
     }
 
     fun isMoveLegal(figure: Figure, toPosition: Position): Boolean {
@@ -63,7 +97,10 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         }
 
         val futureBoard = getFutureBoard()
-        futureBoard.makeMove(figure, toPosition)
+        if (figure.figureColor.toString() == playerTurn.toString() && getCurrentPlayerKing(futureBoard).position == toPosition) {
+            return false
+        }
+        futureBoard.makeMove(figure.clone(futureBoard), toPosition)
         futureBoard.playerTurn = this.playerTurn
         val futureCheckValidation = validateCheckOnKing(futureBoard)
         if (futureCheckValidation.check) {
@@ -87,6 +124,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
     private fun getFutureBoard(): Board {
         val futureBoard = Board(this.playerTurn)
         futureBoard.figures = this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
+        futureBoard.figures.forEach { f -> f.board = futureBoard }
         return futureBoard
     }
 
@@ -109,7 +147,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
     }
 
     private fun getFieldsAvailableToBlockStraight(attackingFigure: Figure): List<Position> {
-        val kingPosition = getCurrentPlayerKingPosition()
+        val kingPosition = getCurrentPlayerKingPosition(this)
         val kingPositionX = kingPosition.x
         val kingPositionY = kingPosition.y
 
@@ -143,7 +181,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
 
     private fun getFieldsAvailableToBlockOblique(attackingFigure: Figure): List<Position> {
         val attackingFigureMoves: List<Position> = attackingFigure.getLegalMoves()
-        val kingPosition = getCurrentPlayerKingPosition()
+        val kingPosition = getCurrentPlayerKingPosition(this)
         val kingPositionX = kingPosition.x
         val kingPositionY = kingPosition.y
 
@@ -175,13 +213,13 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
     }
 
     private fun validateCheckOnKing(board: Board): CheckValidationResult {
-        val figuresForColor = when (playerTurn) {
+        val figuresForColor = when (board.playerTurn) {
             PlayerTurn.WHITE -> board.findAllFigures(FigureColor.BLACK)
             PlayerTurn.BLACK -> board.findAllFigures(FigureColor.WHITE)
         }
 
         val checkingFigures = figuresForColor
-            .filter { figure -> figure.getLegalMoves().contains(board.getCurrentPlayerKingPosition()) }
+            .filter { figure -> figure.getLegalMoves().contains(board.getCurrentPlayerKingPosition(board)) }
 
         if (checkingFigures.isEmpty()) {
             return CheckValidationResult(false)
@@ -190,11 +228,18 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         return CheckValidationResult(true, checkingFigures.first())
     }
 
-    private fun getCurrentPlayerKingPosition(): Position {
+    private fun getCurrentPlayerKingPosition(board: Board): Position {
         return when (playerTurn) {
-            PlayerTurn.WHITE -> findKing(FigureColor.WHITE)
-            PlayerTurn.BLACK -> findKing(FigureColor.BLACK)
+            PlayerTurn.WHITE -> board.findKing(board, FigureColor.WHITE)
+            PlayerTurn.BLACK -> board.findKing(board, FigureColor.BLACK)
         }.position
+    }
+
+    private fun getCurrentPlayerKing(board: Board): King {
+        return when (playerTurn) {
+            PlayerTurn.WHITE -> findKing(board, FigureColor.WHITE)
+            PlayerTurn.BLACK -> findKing(board, FigureColor.BLACK)
+        }
     }
 
     fun findFigure(position: Position): Figure? {
@@ -215,8 +260,8 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         return figures.filter { figure -> figure.figureColor == figureColor }
     }
 
-    private fun findKing(figureColor: FigureColor): King {
-        return figures.first { figure -> figure is King && figure.figureColor == figureColor } as King
+    private fun findKing(board: Board, figureColor: FigureColor): King {
+        return board.figures.first { figure -> figure is King && figure.figureColor == figureColor } as King
     }
 
     fun save(gameStateManager: GameStateManager) {

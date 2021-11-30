@@ -33,10 +33,6 @@ abstract class Figure(
         return figure != null && figure.isWhite()
     }
 
-    protected fun areXPositionsEqual(position1: Position, position2: Position): Boolean {
-        return position1.x == position2.x
-    }
-
     protected fun findLegalMovesRightUp(): List<Position> {
         val figurePosition: Position = this.position
         val legalPositions: MutableList<Position> = mutableListOf()

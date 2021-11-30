@@ -13,6 +13,8 @@ class ResourcesManager {
     private val bishop = loadFileContent("bishop.txt")
     private val queen = loadFileContent("queen.txt")
     private val king = loadFileContent("king.txt")
+    private val blackWin = loadFileContent("black_win.txt")
+    private val whiteWin = loadFileContent("white_win.txt")
 
     fun getPawnTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
         return Texture(pawn, color, backgroundColor)
@@ -40,6 +42,22 @@ class ResourcesManager {
 
     fun getEmptyFieldTexture(backgroundColor: BackgroundColor): Texture {
         return Texture(loadFileContent("empty_field.txt"), null, backgroundColor)
+    }
+
+    fun getBlackWinTexture(backgroundColor: BackgroundColor): Texture {
+        return Texture(loadFileContent("black_win.txt"), null, backgroundColor)
+    }
+
+    fun getWhiteWinTexture(backgroundColor: BackgroundColor): Texture {
+        return Texture(loadFileContent("white_win.txt"), null, backgroundColor)
+    }
+
+    fun getStaleMateOnWhiteTexture(backgroundColor: BackgroundColor): Texture {
+        return Texture(loadFileContent("stalemate_on_white.txt"), null, backgroundColor)
+    }
+
+    fun getStaleMateOnBlackTexture(backgroundColor: BackgroundColor): Texture {
+        return Texture(loadFileContent("stalemate_on_black.txt"), null, backgroundColor)
     }
 
     fun loadLastGameSave(): String {
