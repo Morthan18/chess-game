@@ -217,11 +217,19 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         return figures.find { f -> f.isMarked }
     }
 
-    fun findAllFigures(figureColor: FigureColor): List<Figure> {
+    private fun findAllFigures(figureColor: FigureColor): List<Figure> {
         return figures.filter { figure -> figure.figureColor == figureColor }
     }
 
-    fun findKing(figureColor: FigureColor): King {
+    private fun findKing(figureColor: FigureColor): King {
         return figures.first { figure -> figure is King && figure.figureColor == figureColor } as King
+    }
+
+    fun save(gameStateManager: GameStateManager) {
+        gameStateManager.save(this)
+    }
+
+    fun load(gameStateManager: GameStateManager) {
+        gameStateManager.load()
     }
 }

@@ -7,9 +7,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
+class ConsoleBoardRenderer(val board: Board) : BoardRenderer {
     private val cursor: Cursor = Cursor(Position(3, 1))
     private val cleanConsole: String = "\u001b[H\u001b[2J"
+    private val resourcesManager = ResourcesManager()
 
     init {
         val logger: Logger = Logger.getLogger(GlobalScreen::class.java.getPackage().name)
@@ -48,7 +49,6 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
     }
 
     override fun render() {
-        val loader = ResourcesLoader()
         val rowsToRender: MutableList<Row> = mutableListOf()
 
         for (y in BOARD_SIDE_LENGTH downTo 0) {
@@ -57,16 +57,16 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
                 val figure: Figure? = board.findFigure(Position(x, y))
                 val texture: Texture = if (figure != null) {
                     when (figure) {
-                        is Rook -> loader.getRook(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Pawn -> loader.getPawn(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Knight -> loader.getKnight(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Bishop -> loader.getBishop(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Queen -> loader.getQueen(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is King -> loader.getKing(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Rook -> resourcesManager.getRookTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Pawn -> resourcesManager.getPawnTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Knight -> resourcesManager.getKnightTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Bishop -> resourcesManager.getBishopTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Queen -> resourcesManager.getQueenTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is King -> resourcesManager.getKingTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
                         else -> throw RuntimeException("Unknown figure")
                     }
                 } else {
-                    loader.getEmptyField(chooseBackgroundColor(Position(x, y)))
+                    resourcesManager.getEmptyFieldTexture(chooseBackgroundColor(Position(x, y)))
                 }
                 currentRow.addTexture(texture)
             }
@@ -75,6 +75,7 @@ class ConsoleBoardRenderer(private val board: Board) : BoardRenderer {
         print(cleanConsole)
 
         rowsToRender.forEach { row -> row.render() }
+        print("[1] save game   [2] load last saved game \n")
     }
 
     override fun selectFigure() {
