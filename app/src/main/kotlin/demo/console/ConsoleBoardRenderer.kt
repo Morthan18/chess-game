@@ -7,7 +7,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-class ConsoleBoardRenderer(val board: Board) : BoardRenderer {
+class ConsoleBoardRenderer(var board: Board) : BoardRenderer {
     private val cursor: Cursor = Cursor(Position(3, 1))
     private val cleanConsole: String = "\u001b[H\u001b[2J"
     private val resourcesManager = ResourcesManager()
@@ -57,12 +57,30 @@ class ConsoleBoardRenderer(val board: Board) : BoardRenderer {
                 val figure: Figure? = board.findFigure(Position(x, y))
                 val texture: Texture = if (figure != null) {
                     when (figure) {
-                        is Rook -> resourcesManager.getRookTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Pawn -> resourcesManager.getPawnTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Knight -> resourcesManager.getKnightTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Bishop -> resourcesManager.getBishopTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is Queen -> resourcesManager.getQueenTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
-                        is King -> resourcesManager.getKingTexture(figure.figureColor, chooseBackgroundColor(Position(x, y)))
+                        is Rook -> resourcesManager.getRookTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
+                        is Pawn -> resourcesManager.getPawnTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
+                        is Knight -> resourcesManager.getKnightTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
+                        is Bishop -> resourcesManager.getBishopTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
+                        is Queen -> resourcesManager.getQueenTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
+                        is King -> resourcesManager.getKingTexture(
+                            figure.figureColor,
+                            chooseBackgroundColor(Position(x, y))
+                        )
                         else -> throw RuntimeException("Unknown figure")
                     }
                 } else {
@@ -140,5 +158,13 @@ class ConsoleBoardRenderer(val board: Board) : BoardRenderer {
                 BackgroundColor.BLUE
             }
         }
+    }
+
+    fun loadGame(gameStateManager: FileGameStateManager) {
+        val loadedBoard = this.board.load(gameStateManager)
+        loadedBoard.figures.forEach { f -> f.board = loadedBoard }
+        this.board = loadedBoard
+        this.cursor.setColorBasedOnPlayerTurn(loadedBoard.playerTurn)
+        this.refresh()
     }
 }

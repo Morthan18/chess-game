@@ -3,7 +3,7 @@ package demo.domain
 abstract class Figure(
     val figureColor: FigureColor,
     var position: Position,
-    val board: Board,
+    @Transient var board: Board,
     var isMarked: Boolean = false
 ) {
 

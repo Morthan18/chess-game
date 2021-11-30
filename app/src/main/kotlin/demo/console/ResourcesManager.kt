@@ -7,29 +7,35 @@ import java.io.InputStream
 
 
 class ResourcesManager {
+    private val pawn = loadFileContent("pawn.txt")
+    private val rook = loadFileContent("rook.txt")
+    private val knight = loadFileContent("knight.txt")
+    private val bishop = loadFileContent("bishop.txt")
+    private val queen = loadFileContent("queen.txt")
+    private val king = loadFileContent("king.txt")
 
     fun getPawnTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("pawn.txt"), color, backgroundColor)
+        return Texture(pawn, color, backgroundColor)
     }
 
     fun getRookTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("rook.txt"), color, backgroundColor)
+        return Texture(rook, color, backgroundColor)
     }
 
     fun getKnightTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("knight.txt"), color, backgroundColor)
+        return Texture(knight, color, backgroundColor)
     }
 
     fun getBishopTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("bishop.txt"), color, backgroundColor)
+        return Texture(bishop, color, backgroundColor)
     }
 
     fun getQueenTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("queen.txt"), color, backgroundColor)
+        return Texture(queen, color, backgroundColor)
     }
 
     fun getKingTexture(color: FigureColor, backgroundColor: BackgroundColor): Texture {
-        return Texture(loadFileContent("king.txt"), color, backgroundColor)
+        return Texture(king, color, backgroundColor)
     }
 
     fun getEmptyFieldTexture(backgroundColor: BackgroundColor): Texture {
@@ -37,12 +43,17 @@ class ResourcesManager {
     }
 
     fun loadLastGameSave(): String {
-        return loadFileContent("saves.txt").last()
+        val file = "D:\\bulbid\\kotlinproject\\app\\src\\main\\resources\\saves.txt"
+        val inputStream: InputStream = File(file).inputStream()
+
+        return inputStream.bufferedReader()
+            .use { it.readLines() }
+            .last()
     }
 
     fun appendSave(content: String) {
-        val uri = Thread.currentThread().contextClassLoader.getResourceAsStream("saves.txt")
-        File(uri).appendText(content)
+        val uri = "D:\\bulbid\\kotlinproject\\app\\src\\main\\resources\\saves.txt"
+        File(uri).appendText("\n" + content)
     }
 
     private fun loadFileContent(textureName: String): List<String> {

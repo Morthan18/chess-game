@@ -9,7 +9,7 @@ class ConsoleGame : Game {
     private val board: Board = Board()
 
     override fun start() {
-        board.setFigures(figuresInitPosition(board))
+        board.figures = figuresInitPosition(board)
         ConsoleBoardRenderer(board).render()
         while (true) {
 

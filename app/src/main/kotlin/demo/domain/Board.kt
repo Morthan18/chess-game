@@ -1,12 +1,8 @@
 package demo.domain
 
 class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
-    private var figures: MutableList<Figure> = mutableListOf()
-
-    fun setFigures(figures: MutableList<Figure>) {
-        this.figures = figures;
-    }
-
+    var figures: MutableList<Figure> = mutableListOf()
+    
     companion object {
         const val BOARD_SIDE_LENGTH: Int = 7
     }
@@ -90,9 +86,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
 
     private fun getFutureBoard(): Board {
         val futureBoard = Board(this.playerTurn)
-        futureBoard.setFigures(
-            this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
-        )
+        futureBoard.figures = this.figures.map { figure -> figure.clone(futureBoard) }.toMutableList()
         return futureBoard
     }
 
@@ -229,7 +223,7 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         gameStateManager.save(this)
     }
 
-    fun load(gameStateManager: GameStateManager) {
-        gameStateManager.load()
+    fun load(gameStateManager: GameStateManager): Board {
+        return gameStateManager.load()
     }
 }
