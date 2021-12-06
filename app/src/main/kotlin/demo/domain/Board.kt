@@ -38,30 +38,6 @@ class Board(var playerTurn: PlayerTurn = PlayerTurn.WHITE) {
         }
     }
 
-    fun isStaleMale(): Boolean {
-        if (findAnyMarkedFigure() !=null){
-            return false
-        }
-        
-        val attackingFigures = when (playerTurn) {
-            PlayerTurn.WHITE -> this.findAllFigures(FigureColor.BLACK)
-            PlayerTurn.BLACK -> this.findAllFigures(FigureColor.WHITE)
-        }
-            .filter { figure -> figure.getLegalMoves().contains(this.getCurrentPlayerKingPosition(this)) }
-
-        val king = getCurrentPlayerKing(this)
-        val doesntHaveAnyMove = king.getLegalMoves().none { move -> this.isMoveLegal(king, move) }
-        val noOtherFigureToMove = when (playerTurn) {
-            PlayerTurn.WHITE -> this.findAllFigures(FigureColor.WHITE)
-            PlayerTurn.BLACK -> this.findAllFigures(FigureColor.BLACK)
-        }.all { figure ->
-            figure.getLegalMoves()
-                .none { move -> this.isMoveLegal(king, move) }
-        }
-
-        return attackingFigures.isEmpty() && doesntHaveAnyMove && noOtherFigureToMove
-    }
-
     fun isMoveLegal(figure: Figure, toPosition: Position): Boolean {
         if (figure.figureColor.toString() != playerTurn.toString()) {
             return false

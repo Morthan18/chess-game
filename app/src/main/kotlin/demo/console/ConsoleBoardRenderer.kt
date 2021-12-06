@@ -121,18 +121,8 @@ class ConsoleBoardRenderer(var board: Board) : BoardRenderer {
                     println(it)
                 }
             }
-        } else if (board.isStaleMale()) {
-            print(cleanConsole)
-            if (board.playerTurn == PlayerTurn.BLACK) {
-                resourcesManager.getStaleMateOnBlackTexture(BackgroundColor.GRAY).content.forEach {
-                    println(it)
-                }
-            } else {
-                resourcesManager.getStaleMateOnWhiteTexture(BackgroundColor.GRAY).content.forEach {
-                    println(it)
-                }
-            }
-        } else {
+        }
+        else {
             this.refresh()
         }
     }

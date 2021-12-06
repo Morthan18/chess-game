@@ -61,7 +61,7 @@ class ResourcesManager {
     }
 
     fun loadLastGameSave(): String {
-        val file = "D:\\bulbid\\kotlinproject\\app\\src\\main\\resources\\saves.txt"
+        val file = "/home/ksnopko/Projects/moje/chess-game/app/src/main/resources/saves.txt"
         val inputStream: InputStream = File(file).inputStream()
 
         return inputStream.bufferedReader()
@@ -70,7 +70,7 @@ class ResourcesManager {
     }
 
     fun appendSave(content: String) {
-        val uri = "D:\\bulbid\\kotlinproject\\app\\src\\main\\resources\\saves.txt"
+        val uri = "/home/ksnopko/Projects/moje/chess-game/app/src/main/resources/saves.txt"
         File(uri).appendText("\n" + content)
     }
 
